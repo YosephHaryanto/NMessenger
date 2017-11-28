@@ -17,8 +17,4 @@ target 'nMessenger' do
     inherit! :search_paths
     # Pods for testing
   end
-
-  target 'nMessenger-iOS' do
-    inherit! :search_paths
-  end
 end
