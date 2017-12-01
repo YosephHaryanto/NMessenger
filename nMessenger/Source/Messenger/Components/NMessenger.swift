@@ -415,22 +415,6 @@ open class NMessenger: UIView {
         return retArray
     }
     
-    //MARK: Private functions
-    
-    /**
-     Waits for the messageLock(semaphore) to expire. **Warning** dispatch_semaphore_signal(self.messageLock) must be called
-     after the block
-     - parameter competion: called once the semaphore has expired
-     */
-    fileprivate func waitForMessageLock(_ completion: @escaping ()->Void) {
-        //DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
-            
-        DispatchQueue.global().async {
-            _ = self.state.messageLock.wait(timeout: DispatchTime.distantFuture)
-            completion()
-        }
-    }
-    
     /**
      *We DO NOT wait for the semaphore here because of the possible change in state. Use waitForMessageLock before calling this.*
      
@@ -440,7 +424,7 @@ open class NMessenger: UIView {
      - parameter scrollsToMessage: If marked true, the tableview will scroll to the newly added
      message
      */
-    fileprivate func addMessages(_ messages: [GeneralMessengerCell], atIndex index: Int, scrollsToMessage: Bool, animation: UITableViewRowAnimation, completion: (()->Void)?) {
+    func addMessages(_ messages: [GeneralMessengerCell], atIndex index: Int, scrollsToMessage: Bool, animation: UITableViewRowAnimation, completion: (()->Void)?) {
         DispatchQueue.main.async {
             if messages.count > 0 {
                 //set the new state
@@ -475,6 +459,22 @@ open class NMessenger: UIView {
                 self.state.messageLock.signal()
                 completion?()
             }
+        }
+    }
+    
+    //MARK: Private functions
+    
+    /**
+     Waits for the messageLock(semaphore) to expire. **Warning** dispatch_semaphore_signal(self.messageLock) must be called
+     after the block
+     - parameter competion: called once the semaphore has expired
+     */
+    fileprivate func waitForMessageLock(_ completion: @escaping ()->Void) {
+        //DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
+            
+        DispatchQueue.global().async {
+            _ = self.state.messageLock.wait(timeout: DispatchTime.distantFuture)
+            completion()
         }
     }
     
